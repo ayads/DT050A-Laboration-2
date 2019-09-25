@@ -32,8 +32,10 @@ public class GroupCommuncation {
 	LeaveMessageListener leaveMessageListener = null;
 	ResponseJoinMessageListener responseJoinMessageListener = null;
 
+	//Create a new client.
 	public Client activeClient = createClient();
 
+	//A List of all active clients.
 	public Vector<Integer> activeClientList = new Vector();
 
 	public GroupCommuncation() {
