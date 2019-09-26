@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - WindowProgram",
+            "request": "launch",
+            "mainClass": "WindowProgram",
+            "projectName": "DT050A-Distributed-Systems-laboration-2_da978c31"
+        }
+    ]
+}
