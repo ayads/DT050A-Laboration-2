@@ -114,7 +114,6 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 				txtpnStatus.setText(leaveMessage.clientID + " left the conversation." + "\n" + txtpnStatus.getText());
 				gc.activeClientList.remove(leaveMessage.clientID);
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

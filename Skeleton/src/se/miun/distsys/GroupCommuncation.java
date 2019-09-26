@@ -20,7 +20,6 @@ import se.miun.distsys.clients.Client;
 import se.miun.distsys.clients.UniqueIdentifier;
 
 public class GroupCommuncation {
-	
 	private int datagramSocketPort = 2019;	
 	DatagramSocket datagramSocket = null;	
 	boolean runGroupCommuncation = true;	
@@ -56,7 +55,6 @@ public class GroupCommuncation {
 	}
 	
 	class ReceiveThread extends Thread{
-		
 		@Override
 		public void run() {
 			byte[] buffer = new byte[65536];		
@@ -74,7 +72,6 @@ public class GroupCommuncation {
 		}
 
 		private void handleMessage (Message message) {
-			
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
 				if(chatMessageListener != null){
@@ -102,7 +99,7 @@ public class GroupCommuncation {
 			}
 		}
 	}
-
+	
 	public Client createClient(){
 		try {
 			Thread.sleep(250);
