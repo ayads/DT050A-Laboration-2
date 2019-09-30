@@ -9,13 +9,13 @@ import java.util.Vector;
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.listeners.JoinMessageListener;
 import se.miun.distsys.listeners.LeaveMessageListener;
-import se.miun.distsys.listeners.ResponseJoinMessageListener;
+import se.miun.distsys.listeners.JoinResponseMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
-import se.miun.distsys.messages.ResponseJoinMessage;
+import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
 import se.miun.distsys.clients.UniqueIdentifier;
 
@@ -29,7 +29,7 @@ public class GroupCommuncation {
 	ChatMessageListener chatMessageListener = null;
 	JoinMessageListener joinMessageListener = null;
 	LeaveMessageListener leaveMessageListener = null;
-	ResponseJoinMessageListener responseJoinMessageListener = null;
+	JoinResponseMessageListener joinResponseMessageListener = null;
 
 	//Create a new client.
 	public Client activeClient = createClient();
@@ -88,10 +88,10 @@ public class GroupCommuncation {
 				if (leaveMessageListener != null) {
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
-			} else if (message instanceof ResponseJoinMessage) {
-				ResponseJoinMessage responseJoinMessage = (ResponseJoinMessage) message;
-				if (responseJoinMessageListener != null) {
-					responseJoinMessageListener.onIncomingResponseJoinMessage(responseJoinMessage);
+			} else if (message instanceof JoinResponseMessage) {
+				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
+				if (joinResponseMessageListener != null) {
+					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			} 
 			else {
@@ -136,10 +136,10 @@ public class GroupCommuncation {
 		}
 	}
 
-	public void sendResponseJoinMessage() {
+	public void sendJoinResponseMessage() {
 		try {
-			ResponseJoinMessage responseJoinMessage = new ResponseJoinMessage(activeClient);
-			byte[] sendData = messageSerializer.serializeMessage(responseJoinMessage);
+			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
+			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
 			datagramSocket.send(sendPacket);
@@ -168,8 +168,8 @@ public class GroupCommuncation {
 		this.joinMessageListener = listener;
 	}
 
-	public void setResponseJoinMessageListener(ResponseJoinMessageListener listener) {
-		this.responseJoinMessageListener = listener;
+	public void setJoinResponseMessageListener(JoinResponseMessageListener listener) {
+		this.joinResponseMessageListener = listener;
 	}
 
 	public void setLeaveMessageListener(LeaveMessageListener listener) {

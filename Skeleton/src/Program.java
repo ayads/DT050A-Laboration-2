@@ -5,15 +5,15 @@ import se.miun.distsys.GroupCommuncation;
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.listeners.JoinMessageListener;
 import se.miun.distsys.listeners.LeaveMessageListener;
-import se.miun.distsys.listeners.ResponseJoinMessageListener;
+import se.miun.distsys.listeners.JoinResponseMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
-import se.miun.distsys.messages.ResponseJoinMessage;
+import se.miun.distsys.messages.JoinResponseMessage;
 
 //Skeleton code for Distributed systems 9hp, DT050A
 
-public class Program implements ChatMessageListener, JoinMessageListener, ResponseJoinMessageListener, LeaveMessageListener{
+public class Program implements ChatMessageListener, JoinMessageListener, JoinResponseMessageListener, LeaveMessageListener{
 	boolean runProgram = true;
 	GroupCommuncation gc = null;	
 		
@@ -21,7 +21,7 @@ public class Program implements ChatMessageListener, JoinMessageListener, Respon
 		gc = new GroupCommuncation();		
 		gc.setChatMessageListener(this);
 		gc.setJoinMessageListener(this);
-		gc.setResponseJoinMessageListener(this);
+		gc.setJoinResponseMessageListener(this);
 		gc.setLeaveMessageListener(this);
 		System.out.println("Group Communcation Started");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));		
@@ -32,7 +32,7 @@ public class Program implements ChatMessageListener, JoinMessageListener, Respon
 				String chat = br.readLine();			
 				gc.sendChatMessage(gc.activeClient, chat);
 				gc.sendJoinMessage(gc.activeClient);
-				gc.sendResponseJoinMessage();
+				gc.sendJoinResponseMessage();
 				
 				Thread.sleep(1000);
 			} catch (Exception e) {
@@ -53,8 +53,8 @@ public class Program implements ChatMessageListener, JoinMessageListener, Respon
 	}
 
 	@Override
-	public void onIncomingResponseJoinMessage(ResponseJoinMessage responseJoinMessage) {		
-		System.out.println("Incoming response-join-message id: " + responseJoinMessage.clientID);	
+	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {		
+		System.out.println("Incoming response-join-message id: " + joinResponseMessage.clientID);	
 	}
 
 	@Override

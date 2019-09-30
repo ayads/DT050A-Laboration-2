@@ -2,11 +2,11 @@ package se.miun.distsys.messages;
 
 import se.miun.distsys.clients.Client;
 
-public class ResponseJoinMessage extends Message {
+public class JoinResponseMessage extends Message {
     
     public int clientID;
 
-	public ResponseJoinMessage(Client client) {
+	public JoinResponseMessage(Client client) {
         this.clientID = client.getID();
 	}
 }

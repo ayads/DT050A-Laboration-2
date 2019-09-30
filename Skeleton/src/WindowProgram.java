@@ -14,13 +14,13 @@ import se.miun.distsys.GroupCommuncation;
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.listeners.JoinMessageListener;
 import se.miun.distsys.listeners.LeaveMessageListener;
-import se.miun.distsys.listeners.ResponseJoinMessageListener;
+import se.miun.distsys.listeners.JoinResponseMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
-import se.miun.distsys.messages.ResponseJoinMessage;
+import se.miun.distsys.messages.JoinResponseMessage;
 
-public class WindowProgram implements ChatMessageListener, JoinMessageListener, LeaveMessageListener, ResponseJoinMessageListener, ActionListener {
+public class WindowProgram implements ChatMessageListener, JoinMessageListener, LeaveMessageListener, JoinResponseMessageListener, ActionListener {
 	JFrame frame;
 	JTextPane txtpnChat = new JTextPane();
 	JTextPane txtpnMessage = new JTextPane();
@@ -33,7 +33,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 		gc = new GroupCommuncation();
 		gc.setChatMessageListener(this);
 		gc.setJoinMessageListener(this);
-		gc.setResponseJoinMessageListener(this);
+		gc.setJoinResponseMessageListener(this);
 		gc.setLeaveMessageListener(this);
 		System.out.println("Group Communcation Started");
 	}
@@ -86,9 +86,9 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
 			gc.activeClientList.add(joinMessage.clientID);
-			txtpnStatus.setText(joinMessage.clientID + " joined the conversation." + "\n" + txtpnStatus.getText());
+			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){
-				gc.sendResponseJoinMessage();
+				gc.sendJoinResponseMessage();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,11 +96,11 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	}
 
 	@Override
-	public void onIncomingResponseJoinMessage(ResponseJoinMessage responseJoinMessage) {
+	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
-			if (!gc.activeClientList.contains(responseJoinMessage.clientID)){
-				gc.activeClientList.add(responseJoinMessage.clientID);
-				txtpnStatus.setText(responseJoinMessage.clientID + " joined the conversation." + "\n" + txtpnStatus.getText());
+			if (!gc.activeClientList.contains(joinResponseMessage.clientID)){
+				gc.activeClientList.add(joinResponseMessage.clientID);
+				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,7 +111,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
 			if (gc.activeClientList.contains(leaveMessage.clientID)){
-				txtpnStatus.setText(leaveMessage.clientID + " left the conversation." + "\n" + txtpnStatus.getText());
+				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
 				gc.activeClientList.remove(leaveMessage.clientID);
 			}
 		} catch (Exception e) {
