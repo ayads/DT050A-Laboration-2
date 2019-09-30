@@ -15,6 +15,7 @@ import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
+import se.miun.distsys.vectorClocks.VectorClock;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
 import se.miun.distsys.clients.UniqueIdentifier;
@@ -33,6 +34,7 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
+	public VectorClock vClock = new VectorClock();
 
 	//A List of all active clients.
 	public Vector<Integer> activeClientList = new Vector();

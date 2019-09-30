@@ -11,3 +11,9 @@ The main goal of this laboration is to implement causal ordring in the chat syst
 ## Credit
 - Ayad Shaif (aysh1500)
 - Patrik Högblom(pahg1600)
+
+## Definitions
+
+### Vector Clock
+Vector clocks are an improvement on Lamport clocks, in that it is possible to determine by examining their vector timestamps whether two events
+are ordered by happened-before or are concurrent.

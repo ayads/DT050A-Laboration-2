@@ -1,21 +1,13 @@
 package se.miun.distsys.vectorClocks;
 
-import java.util.Vector;
 
 public class VectorClock {
 
-    private int timestamp = 0;
-    public Vector<Integer> clockEntry = new Vector();
+    public class InternalEvent{
 
-    public VectorClock vectorClock() {
-        return new VectorClock();
     }
 
-    public VectorClock updateVectorClock() {
-        return new VectorClock();
-    }
+    public class ExternalEvent{
 
-    public VectorClock showVectorClock() {
-        return new VectorClock();
     }
 }
