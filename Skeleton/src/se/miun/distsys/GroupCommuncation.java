@@ -138,7 +138,7 @@ public class GroupCommuncation {
 		}
 	}
 
-	public void sendJoinResponseMessage() {
+	public void sendJoinResponseMessage () {
 		try {
 			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
 			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);

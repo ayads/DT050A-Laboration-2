@@ -3,11 +3,12 @@ package se.miun.distsys.vectorClocks;
 
 public class VectorClock {
 
-    public class InternalEvent{
-
+    int timestamp;
+    public int updateTimestamp (){
+        return timestamp + 1;
     }
 
-    public class ExternalEvent{
-
+    public int updateTimestamp (int time){
+        return Math.max(time, timestamp);
     }
 }
