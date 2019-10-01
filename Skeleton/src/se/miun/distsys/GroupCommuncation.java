@@ -4,6 +4,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import se.miun.distsys.listeners.ChatMessageListener;
@@ -34,10 +36,10 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public VectorClock vClock = new VectorClock();
+	public VectorClock vectorClock = new VectorClock();
 
 	//A List of all active clients.
-	public Vector<Integer> activeClientList = new Vector();
+	public HashMap<Integer, Integer> activeClientList = new HashMap(100);
 
 	public GroupCommuncation() {
 		try {
@@ -46,6 +48,7 @@ public class GroupCommuncation {
 			ReceiveThread rt = new ReceiveThread();
 			rt.start();
 			sendJoinMessage(activeClient);
+			VectorClock vectorClock = new VectorClock();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,7 +58,7 @@ public class GroupCommuncation {
 		sendLeaveMessage();
 		runGroupCommuncation = false;
 	}
-	
+
 	class ReceiveThread extends Thread{
 		@Override
 		public void run() {
@@ -102,7 +105,7 @@ public class GroupCommuncation {
 		}
 	}
 	
-	public Client createClient(){
+	public Client createClient() {
 		try {
 			Thread.sleep(250);
 			Client activeClient = new Client(InetAddress.getByName("255.255.255.255"), datagramSocketPort, 
@@ -113,6 +116,12 @@ public class GroupCommuncation {
 		}
 		return null;
 	}
+
+	public void printActiveClientList(HashMap<Integer, Integer> activeClientList) { 
+		for (Map.Entry client : activeClientList.entrySet()) {
+			System.out.println("Client ID: " + client.getKey() + "\t" + "Timestamp: " + client.getValue());
+		}
+    } 
 	
 	public void sendChatMessage(Client client, String chat) {
 		try {
@@ -138,7 +147,7 @@ public class GroupCommuncation {
 		}
 	}
 
-	public void sendJoinResponseMessage () {
+	public void sendJoinResponseMessage() {
 		try {
 			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
 			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);

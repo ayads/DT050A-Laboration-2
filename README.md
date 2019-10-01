@@ -14,6 +14,10 @@ The main goal of this laboration is to implement causal ordring in the chat syst
 
 ## Definitions
 
+### Causal Ordering
+If multicast(g, m) ➔ multicast(g, m'), where ➔ is the
+happened-before relation induced only by messages sent between the members of g, then any correct process that delivers m' will deliver m before m'.
+
 ### Vector Clock
 Vector clocks are an improvement on Lamport clocks, in that it is possible to determine by examining their vector timestamps whether two events
 are ordered by happened-before or are concurrent.

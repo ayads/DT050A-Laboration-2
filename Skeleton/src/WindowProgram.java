@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Map;
 import java.awt.EventQueue;
 import java.awt.Color;
 
@@ -18,6 +19,7 @@ import se.miun.distsys.listeners.JoinResponseMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
+import se.miun.distsys.vectorClocks.VectorClock;
 import se.miun.distsys.messages.JoinResponseMessage;
 
 public class WindowProgram implements ChatMessageListener, JoinMessageListener, LeaveMessageListener, JoinResponseMessageListener, ActionListener {
@@ -79,15 +81,19 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
+		gc.vectorClock.updateTimestamp(chatMessage);
+		System.out.println(gc.vectorClock.updateTimestamp(chatMessage));
 		txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 	}
 
 	@Override
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
-			gc.activeClientList.add(joinMessage.clientID);
+			gc.activeClientList.put(joinMessage.clientID, joinMessage.timestamp);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){
+				gc.vectorClock.updateTimestamp(joinMessage);
+				System.out.println(gc.vectorClock.updateTimestamp(joinMessage));
 				gc.sendJoinResponseMessage();
 			}
 		} catch (Exception e) {
@@ -98,9 +104,12 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
-			if (!gc.activeClientList.contains(joinResponseMessage.clientID)){
-				gc.activeClientList.add(joinResponseMessage.clientID);
+			if (!gc.activeClientList.containsKey(joinResponseMessage.clientID)){
+				gc.vectorClock.updateTimestamp(joinResponseMessage);
+				System.out.println(gc.vectorClock.updateTimestamp(joinResponseMessage));
+				gc.activeClientList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
+				gc.printActiveClientList(gc.activeClientList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,7 +119,9 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
-			if (gc.activeClientList.contains(leaveMessage.clientID)){
+			if (gc.activeClientList.containsKey(leaveMessage.clientID)){
+				gc.vectorClock.updateTimestamp(leaveMessage);
+				System.out.println(gc.vectorClock.updateTimestamp(leaveMessage));
 				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
 				gc.activeClientList.remove(leaveMessage.clientID);
 			}
