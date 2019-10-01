@@ -1,30 +1,39 @@
 package se.miun.distsys.vectorClocks;
 
-import java.util.HashMap;
-
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.messages.LeaveMessage;
 
 public class VectorClock {
-    //A List of all active clients.
-	public HashMap<Integer, Integer> activeClientList = new HashMap();
 
-    public int updateTimestamp (ChatMessage chatMessage){
-        return chatMessage.timestamp + 1;
+    ChatMessage chatMessage;
+    JoinMessage joinMessage;
+    JoinResponseMessage joinResponseMessage;
+    LeaveMessage leaveMessage;
+
+    public ChatMessage updateTimestamp (ChatMessage chatMessage){
+        this.chatMessage = chatMessage;
+        chatMessage.timestamp = chatMessage.timestamp + 1;
+        return chatMessage;
     }
 
-    public int updateTimestamp (JoinMessage joinMessage){
-        return joinMessage.timestamp + 1;
+    public JoinMessage updateTimestamp (JoinMessage joinMessage){
+        this.joinMessage = joinMessage;
+        joinMessage.timestamp = joinMessage.timestamp + 1;
+        return joinMessage;
     }
 
-    public int updateTimestamp (JoinResponseMessage joinResponseMessage){
-        return joinResponseMessage.timestamp + 1;
+    public JoinResponseMessage updateTimestamp (JoinResponseMessage joinResponseMessage){
+        this.joinResponseMessage = joinResponseMessage;
+        joinResponseMessage.timestamp = joinResponseMessage.timestamp + 1;
+        return joinResponseMessage;
     }
 
-    public int updateTimestamp (LeaveMessage leaveMessage){
-        return leaveMessage.timestamp + 1;
+    public LeaveMessage updateTimestamp (LeaveMessage leaveMessage){
+        this.leaveMessage = leaveMessage;
+        leaveMessage.timestamp = leaveMessage.timestamp + 1;
+        return leaveMessage;
     }
     /**
      * 

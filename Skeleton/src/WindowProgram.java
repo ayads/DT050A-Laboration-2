@@ -85,9 +85,8 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
-			gc.vectorClock.activeClientList.put(joinMessage.clientID, joinMessage.timestamp);
+			gc.activeClientList.put(joinMessage.clientID, joinMessage.timestamp);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
-			gc.printActiveClientList(gc.vectorClock.activeClientList);
 			if(joinMessage.clientID != gc.activeClient.getID()){				
 				gc.sendJoinResponseMessage();
 			}
@@ -99,8 +98,9 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
-			if (!gc.vectorClock.activeClientList.containsKey(joinResponseMessage.clientID)){
-				gc.vectorClock.activeClientList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
+			gc.printActiveClientList(gc.activeClientList);
+			if (!gc.activeClientList.containsKey(joinResponseMessage.clientID)){
+				gc.activeClientList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
 		} catch (Exception e) {
@@ -111,9 +111,9 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
-			if (gc.vectorClock.activeClientList.containsKey(leaveMessage.clientID)){
+			if (gc.activeClientList.containsKey(leaveMessage.clientID)){
 				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
-				gc.vectorClock.activeClientList.remove(leaveMessage.clientID);
+				gc.activeClientList.remove(leaveMessage.clientID);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

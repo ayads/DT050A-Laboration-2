@@ -36,6 +36,7 @@ public class GroupCommuncation {
 	//Create a new client.
 	public Client activeClient = createClient();
 	public VectorClock vectorClock = new VectorClock();
+	public HashMap<Integer, Integer> activeClientList = new HashMap();
 
 	public GroupCommuncation() {
 		try {
@@ -75,25 +76,25 @@ public class GroupCommuncation {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
 				if(chatMessageListener != null){
-					vectorClock.updateTimestamp(chatMessage);
+					chatMessage = vectorClock.updateTimestamp(chatMessage);
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
 				if (joinMessageListener != null) {
-					vectorClock.updateTimestamp(joinMessage);
+					joinMessage = vectorClock.updateTimestamp(joinMessage);
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
 				if (joinResponseMessageListener != null) {
-					vectorClock.updateTimestamp(joinResponseMessage);
+					joinResponseMessage = vectorClock.updateTimestamp(joinResponseMessage);
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
 				if (leaveMessageListener != null) {
-					vectorClock.updateTimestamp(leaveMessage);
+					leaveMessage = vectorClock.updateTimestamp(leaveMessage);
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
 			}
