@@ -1,34 +1,31 @@
 package se.miun.distsys.vectorClocks;
 
+import java.util.HashMap;
+
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.messages.LeaveMessage;
 
 public class VectorClock {
+    //A List of all active clients.
+	public HashMap<Integer, Integer> activeClientList = new HashMap();
 
-    int timestamp = 0;
-
-    public int updateTimestamp (JoinMessage joinMessageTimestamp){
-        this.timestamp = joinMessageTimestamp.timestamp;
-        return this.timestamp + 1;
+    public int updateTimestamp (ChatMessage chatMessage){
+        return chatMessage.timestamp + 1;
     }
 
-    public int updateTimestamp (JoinResponseMessage joinResponseMessageTimestamp){
-        this.timestamp = joinResponseMessageTimestamp.timestamp;
-        return this.timestamp + 1;
+    public int updateTimestamp (JoinMessage joinMessage){
+        return joinMessage.timestamp + 1;
     }
 
-    public int updateTimestamp (ChatMessage chatMessageTimestamp){
-        this.timestamp = chatMessageTimestamp.timestamp;
-        return this.timestamp + 1;
+    public int updateTimestamp (JoinResponseMessage joinResponseMessage){
+        return joinResponseMessage.timestamp + 1;
     }
 
-    public int updateTimestamp (LeaveMessage leaveMessageTimestamp){
-        this.timestamp = leaveMessageTimestamp.timestamp;
-        return this.timestamp + 1;
+    public int updateTimestamp (LeaveMessage leaveMessage){
+        return leaveMessage.timestamp + 1;
     }
-
     /**
      * 
      * @param time

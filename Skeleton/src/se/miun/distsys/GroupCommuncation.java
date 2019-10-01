@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.listeners.JoinMessageListener;
@@ -38,9 +37,6 @@ public class GroupCommuncation {
 	public Client activeClient = createClient();
 	public VectorClock vectorClock = new VectorClock();
 
-	//A List of all active clients.
-	public HashMap<Integer, Integer> activeClientList = new HashMap(100);
-
 	public GroupCommuncation() {
 		try {
 			runGroupCommuncation = true;
@@ -48,7 +44,6 @@ public class GroupCommuncation {
 			ReceiveThread rt = new ReceiveThread();
 			rt.start();
 			sendJoinMessage(activeClient);
-			VectorClock vectorClock = new VectorClock();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,25 +75,28 @@ public class GroupCommuncation {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
 				if(chatMessageListener != null){
+					vectorClock.updateTimestamp(chatMessage);
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
 				if (joinMessageListener != null) {
+					vectorClock.updateTimestamp(joinMessage);
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
-
-				}
-			} else if (message instanceof LeaveMessage) {
-				LeaveMessage leaveMessage = (LeaveMessage) message;
-				if (leaveMessageListener != null) {
-					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
 				if (joinResponseMessageListener != null) {
+					vectorClock.updateTimestamp(joinResponseMessage);
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
-			} 
+			}  else if (message instanceof LeaveMessage) {
+				LeaveMessage leaveMessage = (LeaveMessage) message;
+				if (leaveMessageListener != null) {
+					vectorClock.updateTimestamp(leaveMessage);
+					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
+				}
+			}
 			else {
 				System.out.println("Unknown message type");
 			}
