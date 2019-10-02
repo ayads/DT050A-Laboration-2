@@ -16,6 +16,7 @@ import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
+import se.miun.distsys.vectorClocks.VectorClockHandler;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
 import se.miun.distsys.clients.UniqueIdentifier;
@@ -35,6 +36,7 @@ public class GroupCommuncation {
 	//Create a new client.
 	public Client activeClient = createClient();
 	public HashMap<Integer, Integer> activeClientList = new HashMap();
+	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
 
 	public GroupCommuncation() {
 		try {
@@ -111,14 +113,15 @@ public class GroupCommuncation {
 	}
 
 	public void printActiveClientList(HashMap<Integer, Integer> activeClientList) { 
-		for (Map.Entry clientEntry : activeClientList.entrySet()) {
-			System.out.println("Client ID: " + clientEntry.getKey() + "\t" + "Timestamp: " + clientEntry.getValue());
+		for (Map.Entry activeClientEntry : activeClientList.entrySet()) {
+			System.out.println("Client ID: " + activeClientEntry.getKey() + "\t" + "Timestamp: " + activeClientEntry.getValue());
 		}
     } 
 	
 	public void sendChatMessage(Client client, String chat) {
 		try {
 			ChatMessage chatMessage = new ChatMessage(client, chat);
+			vectorClockHandler.updateTimestamp(chatMessage);
 			byte[] sendData = messageSerializer.serializeMessage(chatMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -131,6 +134,7 @@ public class GroupCommuncation {
 	public void sendJoinMessage(Client client) {
 		try {
 			JoinMessage joinMessage = new JoinMessage(client);
+			vectorClockHandler.updateTimestamp(joinMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -143,6 +147,7 @@ public class GroupCommuncation {
 	public void sendJoinResponseMessage() {
 		try {
 			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
+			vectorClockHandler.updateTimestamp(joinResponseMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
