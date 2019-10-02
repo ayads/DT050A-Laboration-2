@@ -16,7 +16,6 @@ import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
-import se.miun.distsys.vectorClocks.VectorClock;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
 import se.miun.distsys.clients.UniqueIdentifier;
@@ -35,7 +34,6 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public VectorClock vectorClock = new VectorClock();
 	public HashMap<Integer, Integer> activeClientList = new HashMap();
 
 	public GroupCommuncation() {
@@ -76,25 +74,21 @@ public class GroupCommuncation {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
 				if(chatMessageListener != null){
-					chatMessage = vectorClock.updateTimestamp(chatMessage);
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
 				if (joinMessageListener != null) {
-					joinMessage = vectorClock.updateTimestamp(joinMessage);
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
 				if (joinResponseMessageListener != null) {
-					joinResponseMessage = vectorClock.updateTimestamp(joinResponseMessage);
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
 				if (leaveMessageListener != null) {
-					leaveMessage = vectorClock.updateTimestamp(leaveMessage);
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
 			}
@@ -117,8 +111,8 @@ public class GroupCommuncation {
 	}
 
 	public void printActiveClientList(HashMap<Integer, Integer> activeClientList) { 
-		for (Map.Entry client : activeClientList.entrySet()) {
-			System.out.println("Client ID: " + client.getKey() + "\t" + "Timestamp: " + client.getValue());
+		for (Map.Entry clientEntry : activeClientList.entrySet()) {
+			System.out.println("Client ID: " + clientEntry.getKey() + "\t" + "Timestamp: " + clientEntry.getValue());
 		}
     } 
 	

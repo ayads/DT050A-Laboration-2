@@ -6,7 +6,6 @@ public class ChatMessage extends Message {
 
 	public String chat = "";
 	public int clientID;
-	public int timestamp;
 	
 	public ChatMessage(Client client, String chat) {
 		this.clientID = client.getID();
