@@ -8,7 +8,7 @@ public class VectorClock extends Message{
         VectorClock.activeTimestampList.forEach((key, value) -> System.out.println("clientID: " + key + "\t" + "Timestamp: " + value));
     }
 
-    public int size() {
+    public int getSize() {
         System.out.println(VectorClock.activeTimestampList.size());
         return VectorClock.activeTimestampList.size();
     }
