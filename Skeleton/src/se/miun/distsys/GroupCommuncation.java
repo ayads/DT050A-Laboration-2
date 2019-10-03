@@ -5,7 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.listeners.JoinMessageListener;
@@ -16,12 +16,12 @@ import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
-import se.miun.distsys.vectorClocks.VectorClockHandler;
+import se.miun.distsys.vectorClocks.VectorClock;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
-import se.miun.distsys.clients.UniqueIdentifier;
 
 public class GroupCommuncation {
+	  
 	private int datagramSocketPort = 2019;	
 	DatagramSocket datagramSocket = null;	
 	boolean runGroupCommuncation = true;	
@@ -35,8 +35,8 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public HashMap<Integer, Integer> activeClientList = new HashMap();
-	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
+	public HashMap<Integer, Integer> causallyOrderedClientList = new HashMap();
+	public VectorClock vectorClock = new VectorClock();
 
 	public GroupCommuncation() {
 		try {
@@ -103,25 +103,17 @@ public class GroupCommuncation {
 	public Client createClient() {
 		try {
 			Thread.sleep(250);
-			Client activeClient = new Client(InetAddress.getByName("255.255.255.255"), datagramSocketPort, 
-					UniqueIdentifier.getUniqueIdentifier());
+			Client activeClient = new Client(InetAddress.getByName("255.255.255.255"), datagramSocketPort, ThreadLocalRandom.current().nextInt(0, 100));
 			return activeClient;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
-	public void printActiveClientList(HashMap<Integer, Integer> activeClientList) { 
-		for (Map.Entry activeClientEntry : activeClientList.entrySet()) {
-			System.out.println("Client ID: " + activeClientEntry.getKey() + "\t" + "Timestamp: " + activeClientEntry.getValue());
-		}
-    } 
 	
 	public void sendChatMessage(Client client, String chat) {
 		try {
 			ChatMessage chatMessage = new ChatMessage(client, chat);
-			vectorClockHandler.updateTimestamp(chatMessage);
 			byte[] sendData = messageSerializer.serializeMessage(chatMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -134,7 +126,6 @@ public class GroupCommuncation {
 	public void sendJoinMessage(Client client) {
 		try {
 			JoinMessage joinMessage = new JoinMessage(client);
-			vectorClockHandler.updateTimestamp(joinMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -147,7 +138,6 @@ public class GroupCommuncation {
 	public void sendJoinResponseMessage() {
 		try {
 			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
-			vectorClockHandler.updateTimestamp(joinResponseMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
