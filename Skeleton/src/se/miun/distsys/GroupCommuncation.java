@@ -16,7 +16,7 @@ import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
-import se.miun.distsys.vectorClocks.VectorClock;
+import se.miun.distsys.vectorClocks.VectorClockHandler;
 import se.miun.distsys.messages.JoinResponseMessage;
 import se.miun.distsys.clients.Client;
 
@@ -35,8 +35,8 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public HashMap<Integer, Integer> causallyOrderedClientList = new HashMap();
-	public VectorClock vectorClock = new VectorClock();
+	public HashMap<Integer, Integer> causallyOrderedClientList = new HashMap<>(); //Maybe static?!
+	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
 
 	public GroupCommuncation() {
 		try {

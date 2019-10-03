@@ -79,14 +79,14 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
-		gc.vectorClock.print();
+		gc.vectorClockHandler.print();
 		txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 	}
 
 	@Override
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
-			gc.vectorClock.print();
+			gc.vectorClockHandler.print();
 			gc.causallyOrderedClientList.put(joinMessage.clientID, 100);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){				
@@ -101,7 +101,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
 			if (!gc.causallyOrderedClientList.containsKey(joinResponseMessage.clientID)){
-				gc.vectorClock.print();
+				gc.vectorClockHandler.print();
 				gc.causallyOrderedClientList.put(joinResponseMessage.clientID, 100);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
@@ -114,7 +114,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
 			if (gc.causallyOrderedClientList.containsKey(leaveMessage.clientID)){
-				gc.vectorClock.print();
+				gc.vectorClockHandler.print();
 				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
 				gc.causallyOrderedClientList.remove(leaveMessage.clientID);
 			}
