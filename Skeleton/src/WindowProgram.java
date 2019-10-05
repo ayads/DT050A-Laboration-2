@@ -2,11 +2,13 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Map;
 import java.awt.EventQueue;
 import java.awt.Color;
 
@@ -79,15 +81,13 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
-		gc.vectorClockHandler.print();
 		txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 	}
 
 	@Override
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
-			gc.vectorClockHandler.print();
-			gc.causallyOrderedClientList.put(joinMessage.clientID, 100);
+			gc.clientActivityLog.put(joinMessage.clientID, joinMessage.timestamp);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){				
 				gc.sendJoinResponseMessage();
@@ -100,9 +100,8 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
-			if (!gc.causallyOrderedClientList.containsKey(joinResponseMessage.clientID)){
-				gc.vectorClockHandler.print();
-				gc.causallyOrderedClientList.put(joinResponseMessage.clientID, 100);
+			if (!gc.clientActivityLog.containsKey(joinResponseMessage.clientID)){
+				gc.clientActivityLog.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
 		} catch (Exception e) {
@@ -113,10 +112,9 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
-			if (gc.causallyOrderedClientList.containsKey(leaveMessage.clientID)){
-				gc.vectorClockHandler.print();
+			if (gc.clientActivityLog.containsKey(leaveMessage.clientID)){
 				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
-				gc.causallyOrderedClientList.remove(leaveMessage.clientID);
+				gc.clientActivityLog.remove(leaveMessage.clientID);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

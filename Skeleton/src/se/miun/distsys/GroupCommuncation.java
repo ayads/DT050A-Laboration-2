@@ -35,7 +35,8 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public HashMap<Integer, Integer> causallyOrderedClientList = new HashMap<>(); //Maybe static?!
+	public HashMap<Integer, Integer> clientActivityLog = new HashMap<>(); //Maybe static?!
+	public HashMap<Integer, Integer> currentClientList = new HashMap<>(); //Maybe static?!
 	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
 
 	public GroupCommuncation() {
@@ -64,14 +65,17 @@ public class GroupCommuncation {
 				try {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
-					Message receivedMessage = messageSerializer.deserializeMessage(packetData);				
+					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
+					// Handle Received Messages
+					vectorClockHandler.handleCurrentClient(receivedMessage, currentClientList);
+					System.out.println("-----=====|Current Client List|=====-----");
+					vectorClockHandler.print(currentClientList);
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;

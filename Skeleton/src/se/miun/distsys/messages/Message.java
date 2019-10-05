@@ -4,5 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class Message implements Serializable{
-    public static HashMap<Integer, Integer> activeTimestampList = new HashMap<>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public static HashMap<Integer, Integer> currentClient = new HashMap<>();
 }
