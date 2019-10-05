@@ -50,7 +50,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 		txtpnChat.setEditable(false);	
 		txtpnChat.setText("--== Group Chat ==--");
 		
-		txtpnMessage.setText(" ➔ ");
+		txtpnMessage.setText(" --> ");
 		frame.getContentPane().add(txtpnMessage);
 		
 		JButton btnSendChatMessage = new JButton("Send Chat Message");
