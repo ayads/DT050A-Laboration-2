@@ -67,9 +67,7 @@ public class GroupCommuncation {
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
 					// Handle Received Messages
-					vectorClockHandler.handleCurrentClient(receivedMessage, currentClientList);
-					System.out.println("-----=====|Current Client List|=====-----");
-					vectorClockHandler.print(currentClientList);
+					//vectorClockHandler.handleCurrentClient(receivedMessage, currentClientList);
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -79,21 +77,25 @@ public class GroupCommuncation {
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
+				vectorClockHandler.handleCurrentClient(chatMessage, currentClientList);
 				if(chatMessageListener != null){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
+				vectorClockHandler.handleCurrentClient(joinMessage, currentClientList);
 				if (joinMessageListener != null) {
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
+				vectorClockHandler.handleCurrentClient(joinResponseMessage, currentClientList);
 				if (joinResponseMessageListener != null) {
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
+				vectorClockHandler.handleCurrentClient(leaveMessage, currentClientList);
 				if (leaveMessageListener != null) {
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
@@ -101,6 +103,7 @@ public class GroupCommuncation {
 			else {
 				System.out.println("Unknown message type");
 			}
+			vectorClockHandler.print(currentClientList);
 		}
 	}
 	

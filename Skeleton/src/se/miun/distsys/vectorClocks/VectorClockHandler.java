@@ -15,7 +15,9 @@ public class VectorClockHandler extends Message{
 	private static final long serialVersionUID = 1L;
 
 	public void print(HashMap<Integer, Integer> currentClientList) {
+		System.out.println("-----=====|Current Client List|=====-----");
 		currentClientList.forEach((key, value) -> System.out.println("clientID: " + key + "\t" + "Timestamp: " + value));
+		System.out.println("\n");
     }
 
 

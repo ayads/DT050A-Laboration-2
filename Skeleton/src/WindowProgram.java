@@ -2,13 +2,11 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.Map;
 import java.awt.EventQueue;
 import java.awt.Color;
 
@@ -27,6 +25,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	JTextPane txtpnChat = new JTextPane();
 	JTextPane txtpnMessage = new JTextPane();
 	JTextPane txtpnStatus = new JTextPane();
+	JTextPane txtpnClient = new JTextPane();
 
 	GroupCommuncation gc = null;
 
@@ -55,6 +54,21 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 		txtpnMessage.setText(" --> ");
 		frame.getContentPane().add(txtpnMessage);
 		
+		Color backgroundColor = new Color(217, 236, 255);
+		JScrollPane scrollPaneClient = new JScrollPane();
+		frame.getContentPane().add(scrollPaneClient);
+		scrollPaneClient.setViewportView(txtpnClient);
+		txtpnClient.setEditable(false);
+		txtpnClient.setText("--== Causally Ordered Activities==--");
+		txtpnClient.setBackground(backgroundColor);
+		
+		JScrollPane scrollPaneStatus = new JScrollPane();
+		frame.getContentPane().add(scrollPaneStatus);
+		scrollPaneStatus.setViewportView(txtpnStatus);
+		txtpnStatus.setEditable(false);
+		txtpnStatus.setText("--== Activity Log ==--");
+		txtpnStatus.setBackground(backgroundColor);
+		
 		JButton btnSendChatMessage = new JButton("Send Chat Message");
 		btnSendChatMessage.addActionListener(this);
 		btnSendChatMessage.setActionCommand("send");
@@ -64,18 +78,20 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	            gc.shutdown();
 	        }
 		});
-		JScrollPane scrollPaneStatus = new JScrollPane();
-		frame.getContentPane().add(scrollPaneStatus);
-		scrollPaneStatus.setViewportView(txtpnStatus);
-		txtpnStatus.setEditable(false);
-		Color backgroundColor = new Color(217, 236, 255);
-		txtpnStatus.setBackground(backgroundColor);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equalsIgnoreCase("send")) {
-			gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
+			for (int i = 0; i < 500; i++) {
+				gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}		
 	}
 
