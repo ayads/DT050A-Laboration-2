@@ -83,10 +83,10 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equalsIgnoreCase("send")) {
-			for (int i = 0; i < 500; i++) {
+			for (int i = 0; i < 100; i++) {
 				gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
 				try {
-					Thread.sleep(10);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

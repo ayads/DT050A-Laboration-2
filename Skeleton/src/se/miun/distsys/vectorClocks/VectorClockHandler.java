@@ -20,6 +20,10 @@ public class VectorClockHandler extends Message{
 		System.out.println("\n");
     }
 
+	public void checkVectorClocks(Message message, HashMap<Integer, Integer> currentClientList) {
+		//Need to check the whole client list regardless clientIDs.
+
+	}
 
     public void handleCurrentClient(Message message, HashMap<Integer, Integer> currentClientList) {
     	HashMap<Integer, Integer> tempList = new HashMap<> ();
@@ -30,6 +34,7 @@ public class VectorClockHandler extends Message{
     			if (expectedTimestamp == chatMessage.timestamp || expectedTimestamp == tempList.get(chatMessage.clientID)) {
     				currentClientList.replace(chatMessage.clientID, chatMessage.timestamp);
     			} else {
+					System.out.println("Rejected: ---------->" + chatMessage.clientID + "\t" + chatMessage.timestamp);
     				tempList.put(chatMessage.clientID, chatMessage.timestamp);
     			}
     		} else {

@@ -66,8 +66,6 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
-					// Handle Received Messages
-					//vectorClockHandler.handleCurrentClient(receivedMessage, currentClientList);
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
