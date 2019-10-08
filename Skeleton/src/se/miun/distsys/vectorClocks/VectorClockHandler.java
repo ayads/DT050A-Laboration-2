@@ -14,70 +14,70 @@ public class VectorClockHandler extends Message{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public void print(HashMap<Integer, Integer> currentClientList) {
-		System.out.println("-----=====|Current Client List|=====-----");
-		currentClientList.forEach((key, value) -> System.out.println("clientID: " + key + "\t" + "Timestamp: " + value));
+	public void print(HashMap<Integer, Integer> holdBackQueue) {
+		System.out.println("-----=====|Hold-Back Queue Message List|=====-----");
+		holdBackQueue.forEach((key, value) -> System.out.println("clientID: " + key + "\t" + "Timestamp: " + value));
 		System.out.println("\n");
-    }
-
-	public void checkVectorClocks(Message message, HashMap<Integer, Integer> currentClientList) {
-		//Need to check the whole client list regardless clientIDs.
-
+	}
+	
+	public void vectorClockHandler(Message message, HashMap<Integer, Integer> holdBackQueue) {
+		//Need to be able to classify which timestamp to accept, reject or buffer.
 	}
 
-    public void handleCurrentClient(Message message, HashMap<Integer, Integer> currentClientList) {
-    	HashMap<Integer, Integer> tempList = new HashMap<> ();
+    public void handleCurrentClient(Message message, HashMap<Integer, Integer> holdBackQueue) {
+    	HashMap<Integer, Integer> bufferList = new HashMap<> ();
     	if(message instanceof ChatMessage) {
     		ChatMessage chatMessage = (ChatMessage) message;
-    		if (currentClientList.containsKey(chatMessage.clientID)) {
-    			int expectedTimestamp = currentClientList.get(chatMessage.clientID) + 1;
-    			if (expectedTimestamp == chatMessage.timestamp || expectedTimestamp == tempList.get(chatMessage.clientID)) {
-    				currentClientList.replace(chatMessage.clientID, chatMessage.timestamp);
+    		if (holdBackQueue.containsKey(chatMessage.clientID)) {
+    			int expectedTimestamp = holdBackQueue.get(chatMessage.clientID) + 1;
+    			if (expectedTimestamp == chatMessage.timestamp || expectedTimestamp == bufferList.get(chatMessage.clientID)) {
+    				holdBackQueue.replace(chatMessage.clientID, chatMessage.timestamp);
     			} else {
 					System.out.println("Rejected: ---------->" + chatMessage.clientID + "\t" + chatMessage.timestamp);
-    				tempList.put(chatMessage.clientID, chatMessage.timestamp);
+    				bufferList.put(chatMessage.clientID, chatMessage.timestamp);
     			}
     		} else {
-    			currentClientList.put(chatMessage.clientID, chatMessage.timestamp);
+    			holdBackQueue.put(chatMessage.clientID, chatMessage.timestamp);
     		}
     	} else if (message instanceof JoinMessage) {
     		JoinMessage joinMessage = (JoinMessage) message;
-    		if (currentClientList.containsKey(joinMessage.clientID)) {
-    			int expectedTimestamp = currentClientList.get(joinMessage.clientID) + 1;
-    			if (expectedTimestamp == joinMessage.timestamp || expectedTimestamp == tempList.get(joinMessage.clientID)) {
-    				currentClientList.replace(joinMessage.clientID, joinMessage.timestamp);
+    		if (holdBackQueue.containsKey(joinMessage.clientID)) {
+    			int expectedTimestamp = holdBackQueue.get(joinMessage.clientID) + 1;
+    			if (expectedTimestamp == joinMessage.timestamp || expectedTimestamp == bufferList.get(joinMessage.clientID)) {
+    				holdBackQueue.replace(joinMessage.clientID, joinMessage.timestamp);
     			} else {
-    				tempList.put(joinMessage.clientID, joinMessage.timestamp);
+    				bufferList.put(joinMessage.clientID, joinMessage.timestamp);
     			}
     		} else {
-    			currentClientList.put(joinMessage.clientID, joinMessage.timestamp);
+    			holdBackQueue.put(joinMessage.clientID, joinMessage.timestamp);
     		}
     	} else if (message instanceof JoinResponseMessage) {
     		JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
-    		if (currentClientList.containsKey(joinResponseMessage.clientID)) {
-    			int expectedTimestamp = currentClientList.get(joinResponseMessage.clientID) + 1;
-    			if (expectedTimestamp == joinResponseMessage.timestamp || expectedTimestamp == tempList.get(joinResponseMessage.clientID)) {
-    				currentClientList.replace(joinResponseMessage.clientID, joinResponseMessage.timestamp);
+    		if (holdBackQueue.containsKey(joinResponseMessage.clientID)) {
+    			int expectedTimestamp = holdBackQueue.get(joinResponseMessage.clientID) + 1;
+    			if (expectedTimestamp == joinResponseMessage.timestamp || expectedTimestamp == bufferList.get(joinResponseMessage.clientID)) {
+    				holdBackQueue.replace(joinResponseMessage.clientID, joinResponseMessage.timestamp);
     			} else {
-    				tempList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
+    				bufferList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
     			}
     		} else {
-    			currentClientList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
+    			holdBackQueue.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
     		}
     	} else if (message instanceof LeaveMessage) {
     		LeaveMessage leaveMessage = (LeaveMessage) message;
-    		if (currentClientList.containsKey(leaveMessage.clientID)) {
-    			int expectedTimestamp = currentClientList.get(leaveMessage.clientID) + 1;
-    			if (expectedTimestamp == leaveMessage.timestamp || expectedTimestamp == tempList.get(leaveMessage.clientID)) {
-    				currentClientList.replace(leaveMessage.clientID, leaveMessage.timestamp);
+    		if (holdBackQueue.containsKey(leaveMessage.clientID)) {
+    			int expectedTimestamp = holdBackQueue.get(leaveMessage.clientID) + 1;
+    			if (expectedTimestamp == leaveMessage.timestamp || expectedTimestamp == bufferList.get(leaveMessage.clientID)) {
+    				holdBackQueue.replace(leaveMessage.clientID, leaveMessage.timestamp);
     			} else {
-    				tempList.put(leaveMessage.clientID, leaveMessage.timestamp);
+    				bufferList.put(leaveMessage.clientID, leaveMessage.timestamp);
     			}
     		} else {
-    			currentClientList.put(leaveMessage.clientID, leaveMessage.timestamp);
+    			holdBackQueue.put(leaveMessage.clientID, leaveMessage.timestamp);
     		}
     	} else {
 			System.out.println("Unknown message type");
 		}
-    }
+	}
+	
 }

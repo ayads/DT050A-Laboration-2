@@ -35,8 +35,9 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public HashMap<Integer, Integer> clientActivityLog = new HashMap<>(); //Maybe static?!
-	public HashMap<Integer, Integer> currentClientList = new HashMap<>(); //Maybe static?!
+	public HashMap<Integer, Integer> clientActivityLog = new HashMap<>();
+	public HashMap<Integer, Integer> holdBackQueue = new HashMap<>();
+
 	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
 
 	public GroupCommuncation() {
@@ -75,25 +76,25 @@ public class GroupCommuncation {
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
-				vectorClockHandler.handleCurrentClient(chatMessage, currentClientList);
+				vectorClockHandler.handleCurrentClient(chatMessage, holdBackQueue);
 				if(chatMessageListener != null){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
-				vectorClockHandler.handleCurrentClient(joinMessage, currentClientList);
+				vectorClockHandler.handleCurrentClient(joinMessage, holdBackQueue);
 				if (joinMessageListener != null) {
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
-				vectorClockHandler.handleCurrentClient(joinResponseMessage, currentClientList);
+				vectorClockHandler.handleCurrentClient(joinResponseMessage, holdBackQueue);
 				if (joinResponseMessageListener != null) {
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
-				vectorClockHandler.handleCurrentClient(leaveMessage, currentClientList);
+				vectorClockHandler.handleCurrentClient(leaveMessage, holdBackQueue);
 				if (leaveMessageListener != null) {
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
@@ -101,7 +102,7 @@ public class GroupCommuncation {
 			else {
 				System.out.println("Unknown message type");
 			}
-			vectorClockHandler.print(currentClientList);
+			vectorClockHandler.print(holdBackQueue);
 		}
 	}
 	
