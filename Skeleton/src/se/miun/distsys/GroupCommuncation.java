@@ -23,8 +23,8 @@ import se.miun.distsys.clients.Client;
 public class GroupCommuncation {
 	  
 	private int datagramSocketPort = 2019;	
-	DatagramSocket datagramSocket = null;	
-	boolean runGroupCommuncation = true;	
+	DatagramSocket datagramSocket = null;
+	boolean runGroupCommuncation = true;
 	MessageSerializer messageSerializer = new MessageSerializer();
 	
 	//Message Listeners
@@ -35,7 +35,7 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
-	public HashMap<Integer, Integer> clientActivityLog = new HashMap<>();
+	public HashMap<Integer, Integer> messageDeliveryList = new HashMap<>();
 	public HashMap<Integer, Integer> holdBackQueue = new HashMap<>();
 
 	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
@@ -76,25 +76,25 @@ public class GroupCommuncation {
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
-				vectorClockHandler.handleCurrentClient(chatMessage, holdBackQueue);
+				holdBackQueue.put(chatMessage.clientID, chatMessage.timestamp);
 				if(chatMessageListener != null){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
-				vectorClockHandler.handleCurrentClient(joinMessage, holdBackQueue);
+				holdBackQueue.put(joinMessage.clientID, joinMessage.timestamp);
 				if (joinMessageListener != null) {
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
-				vectorClockHandler.handleCurrentClient(joinResponseMessage, holdBackQueue);
+				holdBackQueue.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
 				if (joinResponseMessageListener != null) {
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
-				vectorClockHandler.handleCurrentClient(leaveMessage, holdBackQueue);
+				holdBackQueue.put(leaveMessage.clientID, leaveMessage.timestamp);
 				if (leaveMessageListener != null) {
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
@@ -102,14 +102,14 @@ public class GroupCommuncation {
 			else {
 				System.out.println("Unknown message type");
 			}
-			vectorClockHandler.print(holdBackQueue);
 		}
 	}
 	
 	public Client createClient() {
 		try {
 			Thread.sleep(250);
-			Client activeClient = new Client(InetAddress.getByName("255.255.255.255"), datagramSocketPort, ThreadLocalRandom.current().nextInt(0, 100));
+			Client activeClient = new Client(InetAddress.getByName("255.255.255.255"), 
+					datagramSocketPort, ThreadLocalRandom.current().nextInt(0, 100));
 			return activeClient;
 		} catch (Exception e) {
 			e.printStackTrace();

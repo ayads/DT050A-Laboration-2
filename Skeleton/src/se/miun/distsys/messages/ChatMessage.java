@@ -15,7 +15,7 @@ public class ChatMessage extends Message {
 		this.clientID = client.getID();
 		this.chat = chat;
 		if (ChatMessage.currentClient.containsKey(this.clientID)){
-			this.timestamp = JoinMessage.currentClient.get(this.clientID) + 1;
+			this.timestamp = ChatMessage.currentClient.get(this.clientID) + 1;
 			ChatMessage.currentClient.put(this.clientID, this.timestamp);
         }else{
             this.timestamp = timestamp + 1;
