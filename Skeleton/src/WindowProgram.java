@@ -84,7 +84,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equalsIgnoreCase("send")) {
 			gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
- 			for (int i = 0; i < 50; i++) {
+ 			for (int i = 0; i < 5; i++) {
 				gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
 				try {
 					Thread.sleep((long)(Math.random() * 50));
@@ -98,7 +98,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
 		//TODO: handle gc.holdBackQueue by checking if hold- messages.
-		gc.messageDeliveryList.put(chatMessage.clientID, chatMessage.timestamp);
+		gc.messageDeliveryList.put(chatMessage.clientID, 0);
 		txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 	}
 
@@ -106,7 +106,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
 			//TODO: handle gc.holdBackQueue by checking if hold- messages.
-			gc.messageDeliveryList.put(joinMessage.clientID, joinMessage.timestamp);
+			gc.messageDeliveryList.put(joinMessage.clientID, 0);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){				
 				gc.sendJoinResponseMessage();
@@ -121,7 +121,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 		try {
 			if (!gc.messageDeliveryList.containsKey(joinResponseMessage.clientID)){
 				//TODO: handle gc.holdBackQueue by checking if hold- messages.
-				gc.messageDeliveryList.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
+				gc.messageDeliveryList.put(joinResponseMessage.clientID, 0);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
 		} catch (Exception e) {

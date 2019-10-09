@@ -11,7 +11,6 @@ public class VectorClockHandler{
 
 	public VectorClockHandler(Client myself, HashMap<Integer, Integer> myVectorClock){
 		this.myClientID = myself.getID();
-		//myID = myself.getID();
 		this.myVectorClock = myVectorClock;
 		myVectorClock.put(myClientID, 0);
 	}

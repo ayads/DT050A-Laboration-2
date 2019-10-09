@@ -66,6 +66,7 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
+					System.out.println(receivedMessage.messageVectorClock);
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -115,7 +116,7 @@ public class GroupCommuncation {
 	public void sendChatMessage(Client client, String chat) {
 		try {
 			ChatMessage chatMessage = new ChatMessage(client, chat);
-			//incrementVectorClock(chatMessage);
+			vectorClockHandler.incrementVectorClock(chatMessage);
 			byte[] sendData = messageSerializer.serializeMessage(chatMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -141,6 +142,7 @@ public class GroupCommuncation {
 	public void sendJoinResponseMessage() {
 		try {
 			JoinResponseMessage joinResponseMessage = new JoinResponseMessage(activeClient);
+			vectorClockHandler.incrementVectorClock(joinResponseMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinResponseMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -153,6 +155,7 @@ public class GroupCommuncation {
 	public void sendLeaveMessage() {
 		try {
 			LeaveMessage leaveMessage = new LeaveMessage(activeClient);
+			vectorClockHandler.incrementVectorClock(leaveMessage);
 			byte[] sendData = messageSerializer.serializeMessage(leaveMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);

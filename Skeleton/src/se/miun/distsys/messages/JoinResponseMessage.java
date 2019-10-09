@@ -8,8 +8,6 @@ public class JoinResponseMessage extends Message {
 	 */
 	private static final long serialVersionUID = 1L;
 	public int clientID;
-    public int timestamp;
-
 	public JoinResponseMessage(Client client) {
 		this.clientID = client.getID();
 	}
