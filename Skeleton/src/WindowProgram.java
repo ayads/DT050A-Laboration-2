@@ -83,7 +83,6 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equalsIgnoreCase("send")) {
-			gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
  			for (int i = 0; i < 5; i++) {
 				gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
 				try {
@@ -97,16 +96,14 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
-		//TODO: handle gc.holdBackQueue by checking if hold- messages.
-		gc.messageDeliveryList.put(chatMessage.clientID, 0);
+		gc.messageDeliveryList.add(chatMessage.clientID);
 		txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 	}
 
 	@Override
 	public void onIncomingJoinMessage(JoinMessage joinMessage) {
 		try {
-			//TODO: handle gc.holdBackQueue by checking if hold- messages.
-			gc.messageDeliveryList.put(joinMessage.clientID, 0);
+			gc.messageDeliveryList.add(joinMessage.clientID);
 			txtpnStatus.setText(joinMessage.clientID + " join." + "\n" + txtpnStatus.getText());
 			if(joinMessage.clientID != gc.activeClient.getID()){				
 				gc.sendJoinResponseMessage();
@@ -119,9 +116,8 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingJoinResponseMessage(JoinResponseMessage joinResponseMessage) {
 		try {
-			if (!gc.messageDeliveryList.containsKey(joinResponseMessage.clientID)){
-				//TODO: handle gc.holdBackQueue by checking if hold- messages.
-				gc.messageDeliveryList.put(joinResponseMessage.clientID, 0);
+			if (!gc.messageDeliveryList.contains(joinResponseMessage.clientID)){
+				gc.messageDeliveryList.add(joinResponseMessage.clientID);
 				txtpnStatus.setText(joinResponseMessage.clientID + " join response." + "\n" + txtpnStatus.getText());
 			}
 		} catch (Exception e) {
@@ -132,8 +128,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	@Override
 	public void onIncomingLeaveMessage(LeaveMessage leaveMessage) {
 		try {
-			//TODO: handle gc.holdBackQueue by checking if hold- messages.
-			if (gc.messageDeliveryList.containsKey(leaveMessage.clientID)){
+			if (gc.messageDeliveryList.contains(leaveMessage.clientID)){
 				txtpnStatus.setText(leaveMessage.clientID + " left." + "\n" + txtpnStatus.getText());
 				gc.messageDeliveryList.remove(leaveMessage.clientID);
 			}

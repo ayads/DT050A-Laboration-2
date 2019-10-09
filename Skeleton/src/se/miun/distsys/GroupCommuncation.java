@@ -5,6 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
 import se.miun.distsys.listeners.ChatMessageListener;
@@ -36,7 +37,7 @@ public class GroupCommuncation {
 	//Create a new client.
 	public Client activeClient = createClient();
 	public HashMap<Integer, Integer> vectorClock = new HashMap<>();
-	public HashMap<Integer, Integer> messageDeliveryList = new HashMap<>();
+	public Vector<Integer> messageDeliveryList = new Vector<>();
 	public VectorClockHandler vectorClockHandler = new VectorClockHandler(activeClient, vectorClock);
 
 	public GroupCommuncation() {
@@ -66,7 +67,11 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
-					System.out.println(receivedMessage.messageVectorClock);
+					if(vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
+						System.out.println("Causal Order!");
+					} else {
+						System.out.println("Out of Order!");
+					}
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();

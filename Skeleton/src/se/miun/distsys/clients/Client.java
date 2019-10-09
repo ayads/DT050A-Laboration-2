@@ -10,7 +10,7 @@ import java.net.InetAddress;
 public class Client {
     public InetAddress ipAddress;
     public int port;
-    private final int ID;
+    private int ID;
 
     public Client(InetAddress ipAddress, int port, int ID) {
         this.ipAddress = ipAddress;
