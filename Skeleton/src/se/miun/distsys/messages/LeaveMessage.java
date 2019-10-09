@@ -12,12 +12,5 @@ public class LeaveMessage extends Message {
 
 	public LeaveMessage(Client client) {
 		this.clientID = client.getID();
-		if (LeaveMessage.currentClient.containsKey(this.clientID)){
-            this.timestamp = LeaveMessage.currentClient.get(this.clientID) + 1;
-            LeaveMessage.currentClient.put(this.clientID, this.timestamp);
-        }else{
-            this.timestamp = timestamp + 1;
-            LeaveMessage.currentClient.put(this.clientID, this.timestamp);
-        } 
 	}
 }

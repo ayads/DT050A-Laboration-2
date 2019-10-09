@@ -12,12 +12,5 @@ public class JoinResponseMessage extends Message {
 
 	public JoinResponseMessage(Client client) {
 		this.clientID = client.getID();
-		if (JoinResponseMessage.currentClient.containsKey(this.clientID)){
-            this.timestamp = JoinResponseMessage.currentClient.get(this.clientID) + 1;
-            JoinResponseMessage.currentClient.put(this.clientID, this.timestamp);
-        }else{
-            this.timestamp = timestamp + 1;
-            JoinResponseMessage.currentClient.put(this.clientID, this.timestamp);
-        } 
 	}
 }

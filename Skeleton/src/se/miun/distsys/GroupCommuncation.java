@@ -35,10 +35,9 @@ public class GroupCommuncation {
 
 	//Create a new client.
 	public Client activeClient = createClient();
+	public HashMap<Integer, Integer> vectorClock = new HashMap<>();
 	public HashMap<Integer, Integer> messageDeliveryList = new HashMap<>();
-	public HashMap<Integer, Integer> holdBackQueue = new HashMap<>();
-
-	public VectorClockHandler vectorClockHandler = new VectorClockHandler();
+	public VectorClockHandler vectorClockHandler = new VectorClockHandler(activeClient, vectorClock);
 
 	public GroupCommuncation() {
 		try {
@@ -76,25 +75,21 @@ public class GroupCommuncation {
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
-				holdBackQueue.put(chatMessage.clientID, chatMessage.timestamp);
 				if(chatMessageListener != null){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
 				JoinMessage joinMessage = (JoinMessage) message;
-				holdBackQueue.put(joinMessage.clientID, joinMessage.timestamp);
 				if (joinMessageListener != null) {
 					joinMessageListener.onIncomingJoinMessage(joinMessage);
 				}
 			} else if (message instanceof JoinResponseMessage) {
 				JoinResponseMessage joinResponseMessage = (JoinResponseMessage) message;
-				holdBackQueue.put(joinResponseMessage.clientID, joinResponseMessage.timestamp);
 				if (joinResponseMessageListener != null) {
 					joinResponseMessageListener.onIncomingJoinResponseMessage(joinResponseMessage);
 				}
 			}  else if (message instanceof LeaveMessage) {
 				LeaveMessage leaveMessage = (LeaveMessage) message;
-				holdBackQueue.put(leaveMessage.clientID, leaveMessage.timestamp);
 				if (leaveMessageListener != null) {
 					leaveMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
@@ -120,6 +115,7 @@ public class GroupCommuncation {
 	public void sendChatMessage(Client client, String chat) {
 		try {
 			ChatMessage chatMessage = new ChatMessage(client, chat);
+			//incrementVectorClock(chatMessage);
 			byte[] sendData = messageSerializer.serializeMessage(chatMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
@@ -132,6 +128,7 @@ public class GroupCommuncation {
 	public void sendJoinMessage(Client client) {
 		try {
 			JoinMessage joinMessage = new JoinMessage(client);
+			vectorClockHandler.incrementVectorClock(joinMessage);
 			byte[] sendData = messageSerializer.serializeMessage(joinMessage);
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
 					InetAddress.getByName("255.255.255.255"), datagramSocketPort);

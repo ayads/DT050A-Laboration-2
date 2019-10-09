@@ -8,5 +8,5 @@ public class Message implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static HashMap<Integer, Integer> currentClient = new HashMap<>();
+	public HashMap<Integer, Integer> messageVectorClock = null;
 }
