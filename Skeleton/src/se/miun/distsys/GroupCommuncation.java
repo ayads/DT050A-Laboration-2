@@ -67,11 +67,12 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
-					if(vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
+					vectorClockHandler.isCausalOrder(receivedMessage, vectorClock);
+/* 					if(vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
 						System.out.println("Causal Order!");
 					} else {
 						System.out.println("Out of Order!");
-					}
+					} */
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -26,15 +26,8 @@ public class VectorClockHandler{
 		message.messageVectorClock = (HashMap<Integer, Integer>) myVectorClock.clone();
 	}
 
-	public Boolean isCausalOrder (Message receivedMessage, HashMap<Integer, Integer> myVectorClock){	
-		if (myVectorClock.containsKey(myClientID) && receivedMessage.messageVectorClock.containsKey(myClientID)){
-			if (myVectorClock.get(myClientID) <= receivedMessage.messageVectorClock.get(myClientID)){
-				System.out.println(myVectorClock);
-				System.out.println(receivedMessage.messageVectorClock);
-				return true;
-			}
-			return false;
-		}
-		return false;
+	public void isCausalOrder (Message receivedMessage, HashMap<Integer, Integer> myVectorClock){
+		System.out.println(myVectorClock);
+		System.out.println(receivedMessage.messageVectorClock);
 	}
 }
