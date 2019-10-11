@@ -37,7 +37,7 @@ public class GroupCommuncation {
 	//Create a new client.
 	public Client activeClient = createClient();
 	public HashMap<Integer, Integer> vectorClock = new HashMap<>();
-	public Vector<Integer> messageDeliveryList = new Vector<>();
+	public Vector<Integer> activeClientList = new Vector<>();
 	public VectorClockHandler vectorClockHandler = new VectorClockHandler(activeClient, vectorClock);
 
 	public GroupCommuncation() {
@@ -67,12 +67,9 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
-					vectorClockHandler.isCausalOrder(receivedMessage, vectorClock);
-/* 					if(vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
-						System.out.println("Causal Order!");
-					} else {
-						System.out.println("Out of Order!");
-					} */
+					if (!vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
+						
+					};
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
