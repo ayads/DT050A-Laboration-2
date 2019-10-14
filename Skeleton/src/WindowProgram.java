@@ -89,11 +89,6 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 		if (event.getActionCommand().equalsIgnoreCase("send")) {
  			for (int i = 0; i < 100; i++) {
 				gc.sendChatMessage(gc.activeClient, txtpnMessage.getText());
-				try {
-					Thread.sleep((long)(Math.random() * 100));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}
@@ -102,7 +97,7 @@ public class WindowProgram implements ChatMessageListener, JoinMessageListener, 
 	public void onIncomingChatMessage(ChatMessage chatMessage) {
 		if(gc.vectorClockHandler.isCausalOrder(chatMessage, gc.vectorClock)){
 			gc.activeClientList.add(chatMessage.clientID);
-			txtpnChat.setText(chatMessage.clientID + " Hi! This is a generic BOT message!" + "\n" + txtpnChat.getText());
+			txtpnChat.setText(chatMessage.clientID + " ➔ Hi! This is a generic BOT message!" + "\n" + txtpnChat.getText());
 			//txtpnChat.setText(chatMessage.clientID + chatMessage.chat + "\n" + txtpnChat.getText());
 		} else {
 			txtpnCausalOrder.setText(chatMessage.clientID + " is out of order!" + "\n" + txtpnCausalOrder.getText());

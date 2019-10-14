@@ -52,7 +52,3 @@ The following snapshot shows the result obtained when the program was run three 
 ## Multicast with Vector Clock
 The following diagram shows what happens when the program runs three times. For demonstration purposes the three processes will be assigen the letters A, B and C instead of client-IDs.
 ![multicasted messages with vector clocks](/Images/Multicast_Diagram.png)
-
-## Credit
-- Ayad Shaif (aysh1500)
-- Patrik Högblom(pahg1600)

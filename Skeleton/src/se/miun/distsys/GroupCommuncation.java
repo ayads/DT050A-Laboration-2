@@ -67,9 +67,6 @@ public class GroupCommuncation {
 					datagramSocket.receive(datagramPacket);										
 					byte[] packetData = datagramPacket.getData();					
 					Message receivedMessage = messageSerializer.deserializeMessage(packetData);
-					if (!vectorClockHandler.isCausalOrder(receivedMessage, vectorClock)){
-						
-					};
 					handleMessage(receivedMessage);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -79,7 +76,7 @@ public class GroupCommuncation {
 		private void handleMessage (Message message) {
 			if(message instanceof ChatMessage) {
 				ChatMessage chatMessage = (ChatMessage) message;
-				if(chatMessageListener != null){
+				if(chatMessageListener != null ){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
 			} else if (message instanceof JoinMessage) {
